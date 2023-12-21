@@ -65,13 +65,14 @@ class WalletFragment : Fragment() {
                 }
             }
             btnBuy.setOnClickListener {
-                viewModel.sendTransaction { result ->
-                    if (result is RequestError) {
-                        // handle error
-                    } else {
-                        Log.d(TAG, "Ethereum transaction result: $result")
-                    }
-                }
+                viewModel.smartContractFun()
+//                viewModel.sendTransaction { result ->
+//                    if (result is RequestError) {
+//                        // handle error
+//                    } else {
+//                        Log.d(TAG, "Ethereum transaction result: $result")
+//                    }
+//                }
             }
         }
     }

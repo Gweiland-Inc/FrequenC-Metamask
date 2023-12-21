@@ -135,6 +135,7 @@ dependencies {
 //    implementation("io.agora.rtc:full-sdk:12-15-ci-test-2")
 
     implementation 'io.agora.rtm:rtm-sdk:1.4.5'
+    implementation ("org.web3j:core:4.8.7-android")
 
 
 }

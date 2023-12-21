@@ -1,14 +1,11 @@
 package com.dev.frequenc.ui_codes.screens.Dashboard.wallet
 
-import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.scopes.ActivityRetainedScoped
 import io.metamask.androidsdk.Dapp
 import io.metamask.androidsdk.ErrorType
 import io.metamask.androidsdk.Ethereum
@@ -19,7 +16,23 @@ import io.metamask.androidsdk.Logger
 import io.metamask.androidsdk.Network
 import io.metamask.androidsdk.RequestError
 import kotlinx.coroutines.launch
+import org.web3j.abi.FunctionEncoder
+import org.web3j.abi.datatypes.Function
+import org.web3j.crypto.Bip32ECKeyPair
+import org.web3j.crypto.Credentials
+import org.web3j.crypto.MnemonicUtils
+import org.web3j.crypto.RawTransaction
+import org.web3j.protocol.Web3j
+import org.web3j.protocol.core.methods.request.Transaction
+import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt
+import org.web3j.protocol.http.HttpService
+import org.web3j.tx.RawTransactionManager
+import org.web3j.tx.gas.DefaultGasProvider
+import org.web3j.utils.Convert
+import java.math.BigDecimal
+import java.math.BigInteger
 import javax.inject.Inject
+
 
 @HiltViewModel
 class WalletViewModel @Inject constructor(
@@ -103,6 +116,34 @@ class WalletViewModel @Inject constructor(
         }
     }
 
+    // we are encoding the smartcontract function name along with the inputs,
+    // we are using the encoded data to call the smartcontract function with metamask
+    fun smartContractFun() {
+
+        val from = ethereum.selectedAddress
+        val contractAddress = "0x2f930D27e0502Ef690A418D03CF037d0509000c7"
+        val value = BigInteger.valueOf(0.001.toLong())
+
+        val function = Function(
+            "functionName",
+            listOf(),
+            listOf()
+        )
+        val encodedFunction = FunctionEncoder.encode(function)
+        val transaction = Transaction.createFunctionCallTransaction(
+            from,
+            null,
+            null,
+            DefaultGasProvider.GAS_LIMIT,
+            contractAddress,
+            value,
+            encodedFunction,
+        )
+
+        val transactionResponse = web3j.ethSendTransaction(transaction).sendAsync().get();
+
+        val transactionHash: String = transactionResponse.transactionHash
+    }
 
     fun sendTransaction(callback: ((Any?) -> Unit)?) {
         viewModelScope.launch {
