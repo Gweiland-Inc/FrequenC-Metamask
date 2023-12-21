@@ -1,5 +1,6 @@
 package com.dev.frequenc.ui_codes.screens.Dashboard.wallet
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -17,19 +18,16 @@ import io.metamask.androidsdk.Network
 import io.metamask.androidsdk.RequestError
 import kotlinx.coroutines.launch
 import org.web3j.abi.FunctionEncoder
+import org.web3j.abi.TypeReference
+import org.web3j.abi.datatypes.Address
+import org.web3j.abi.datatypes.Bool
 import org.web3j.abi.datatypes.Function
-import org.web3j.crypto.Bip32ECKeyPair
-import org.web3j.crypto.Credentials
-import org.web3j.crypto.MnemonicUtils
-import org.web3j.crypto.RawTransaction
+import org.web3j.abi.datatypes.Type
+import org.web3j.abi.datatypes.generated.Uint256
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.methods.request.Transaction
-import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt
 import org.web3j.protocol.http.HttpService
-import org.web3j.tx.RawTransactionManager
 import org.web3j.tx.gas.DefaultGasProvider
-import org.web3j.utils.Convert
-import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -120,41 +118,30 @@ class WalletViewModel @Inject constructor(
     // we are using the encoded data to call the smartcontract function with metamask
     fun smartContractFun() {
 
-        val from = ethereum.selectedAddress
-        val contractAddress = "0x2f930D27e0502Ef690A418D03CF037d0509000c7"
-        val value = BigInteger.valueOf(0.001.toLong())
-
         val function = Function(
-            "functionName",
-            listOf(),
-            listOf()
+            "approve",
+            listOf(
+                Address("0x499BbB318c729a17f16f9A061C5903aff9264B6f"), // Replace with the spender's address
+                Uint256(BigInteger.valueOf(100)) // Replace with the value you want to approve
+            ),
+            listOf(object : TypeReference<Bool>() {})
         )
         val encodedFunction = FunctionEncoder.encode(function)
-        val transaction = Transaction.createFunctionCallTransaction(
-            from,
-            null,
-            null,
-            DefaultGasProvider.GAS_LIMIT,
-            contractAddress,
-            value,
-            encodedFunction,
-        )
+        Log.d("Encoded",encodedFunction);
+        sendTransaction();
 
-        val transactionResponse = web3j.ethSendTransaction(transaction).sendAsync().get();
-
-        val transactionHash: String = transactionResponse.transactionHash
     }
 
     fun sendTransaction(callback: ((Any?) -> Unit)?) {
         viewModelScope.launch {
             val from = ethereum.selectedAddress
 //            val to = "0x0000000000000000000000000000000000000000"
-            val to = "0x2f930D27e0502Ef690A418D03CF037d0509000c7"
-            val amount = "0x5"
+            val to = "0x90F96A3f63bbC7A9b30C90c31949055Ec304C484"
+            val data = encodedFunction
             val params: Map<String, Any> = mapOf(
                 "from" to from,
                 "to" to to,
-                "amount" to amount
+                "data" to data
             )
 
             ethereum.sendRequest(
