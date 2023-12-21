@@ -65,7 +65,20 @@ class WalletFragment : Fragment() {
                 }
             }
             btnBuy.setOnClickListener {
-                viewModel.smartContractFun(etAmount.text.toString().toLong())
+                if (etAmount.text.toString().isNotEmpty()) {
+                    viewModel.smartContractFun(etAmount.text.toString().toDouble(), "approve")
+                }
+            }
+            btnBuyTokens.setOnClickListener {
+                if (etAmount.text.toString().isNotEmpty()) {
+//                    try {
+//                        val longValue = etAmount.text.toString().toDouble()
+//                        Log.d("NumberFormat", "bindHandlers: $longValue")
+//                    } catch (e: NumberFormatException) {
+//                        Log.d("NumberFormat", "bindHandlers: $e")
+//                    }
+                    viewModel.smartContractFun(etAmount.text.toString().toDouble(), "buyTokens")
+                }
             }
         }
     }

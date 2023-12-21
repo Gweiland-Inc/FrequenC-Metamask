@@ -29,6 +29,7 @@ import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.protocol.http.HttpService
 import org.web3j.tx.gas.DefaultGasProvider
+import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -117,19 +118,22 @@ class WalletViewModel @Inject constructor(
 
     // we are encoding the smartcontract function name along with the inputs,
     // we are using the encoded data to call the smartcontract function with metamask
-    fun smartContractFun(amount: Long) {
+    fun smartContractFun(
+        value: Double,
+        functionName: String
+    ) {
 
         val function = Function(
-            "approve",
+            functionName,
             listOf(
                 Address("0x499BbB318c729a17f16f9A061C5903aff9264B6f"), // Replace with the spender's address
-                Uint256(BigInteger.valueOf(amount)) // Replace with the value you want to approve
+                Uint256(BigInteger.valueOf(100)) // Replace with the value you want to approve
             ),
             listOf(object : TypeReference<Bool>() {})
         )
         val encodedFunction = FunctionEncoder.encode(function)
         Log.d("Encoded",encodedFunction);
-        sendTransaction(encodedFunction) { result ->
+        sendTransaction(value, encodedFunction) { result ->
             if (result is RequestError) {
                 // handle error
                 Log.d(TAG, "Ethereum transaction error: ${result.message}")
@@ -140,7 +144,7 @@ class WalletViewModel @Inject constructor(
 
     }
 
-    private fun sendTransaction(encodedFunction:String, callback: ((Any?) -> Unit)?) {
+    private fun sendTransaction(value: Double, encodedFunction:String, callback: ((Any?) -> Unit)?) {
         viewModelScope.launch {
             val from = ethereum.selectedAddress
 //            val to = "0x0000000000000000000000000000000000000000"
@@ -149,6 +153,7 @@ class WalletViewModel @Inject constructor(
             val params: Map<String, Any> = mapOf(
                 "from" to from,
                 "to" to to,
+                "value" to value, // decimal value of type Double from editText eg. 0.0001
                 "data" to encodedFunction
             )
 
