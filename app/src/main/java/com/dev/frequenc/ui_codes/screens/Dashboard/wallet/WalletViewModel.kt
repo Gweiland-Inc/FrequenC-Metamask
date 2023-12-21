@@ -16,6 +16,7 @@ import io.metamask.androidsdk.EthereumState
 import io.metamask.androidsdk.Logger
 import io.metamask.androidsdk.Network
 import io.metamask.androidsdk.RequestError
+import io.metamask.androidsdk.TAG
 import kotlinx.coroutines.launch
 import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.TypeReference
@@ -128,20 +129,27 @@ class WalletViewModel @Inject constructor(
         )
         val encodedFunction = FunctionEncoder.encode(function)
         Log.d("Encoded",encodedFunction);
-        sendTransaction();
+        sendTransaction(encodedFunction) { result ->
+            if (result is RequestError) {
+                // handle error
+                Log.d(TAG, "Ethereum transaction error: ${result.message}")
+            } else {
+                Log.d(TAG, "Ethereum transaction result: $result")
+            }
+        }
 
     }
 
-    fun sendTransaction(callback: ((Any?) -> Unit)?) {
+    private fun sendTransaction(encodedFunction:String, callback: ((Any?) -> Unit)?) {
         viewModelScope.launch {
             val from = ethereum.selectedAddress
 //            val to = "0x0000000000000000000000000000000000000000"
             val to = "0x90F96A3f63bbC7A9b30C90c31949055Ec304C484"
-            val data = encodedFunction
+//            val data = encodedFunction
             val params: Map<String, Any> = mapOf(
                 "from" to from,
                 "to" to to,
-                "data" to data
+                "data" to encodedFunction
             )
 
             ethereum.sendRequest(
