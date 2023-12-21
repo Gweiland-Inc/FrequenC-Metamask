@@ -66,18 +66,32 @@ class WalletFragment : Fragment() {
             }
             btnBuy.setOnClickListener {
                 if (etAmount.text.toString().isNotEmpty()) {
-                    viewModel.smartContractFun(etAmount.text.toString().toDouble(), "approve")
+                    viewModel.approveSmartContract() { result ->
+                        if (result is RequestError) {
+                            Log.d(TAG, "Ethereum transaction error: ${result.message}")
+                        } else {
+                            Log.d(TAG, "Ethereum transaction result: $result")
+                        }
+                    }
+//                    viewModel.smartContractFun(etAmount.text.toString().toDouble(), "approve")
                 }
             }
             btnBuyTokens.setOnClickListener {
                 if (etAmount.text.toString().isNotEmpty()) {
+                    viewModel.buyTokenSmartContract(etAmount.text.toString().toDouble()) { result ->
+                        if (result is RequestError) {
+                            Log.d(TAG, "Ethereum transaction error: ${result.message}")
+                        } else {
+                            Log.d(TAG, "Ethereum transaction result: $result")
+                        }
+                    }
+//                    viewModel.smartContractFun(etAmount.text.toString().toDouble(), "buyTokens")
 //                    try {
 //                        val longValue = etAmount.text.toString().toDouble()
 //                        Log.d("NumberFormat", "bindHandlers: $longValue")
 //                    } catch (e: NumberFormatException) {
 //                        Log.d("NumberFormat", "bindHandlers: $e")
 //                    }
-                    viewModel.smartContractFun(etAmount.text.toString().toDouble(), "buyTokens")
                 }
             }
         }
