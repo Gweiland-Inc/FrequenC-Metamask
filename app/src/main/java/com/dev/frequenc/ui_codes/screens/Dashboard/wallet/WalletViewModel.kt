@@ -123,8 +123,8 @@ class WalletViewModel @Inject constructor(
         val function = Function(
             "approve",
             listOf(
-                Address("0x499BbB318c729a17f16f9A061C5903aff9264B6f"), // Replace with the spender's address
-                Uint256(BigInteger.valueOf(100)) // Replace with the value you want to approve
+                Address("0xC339BFCa084Df58DfAe10b111465057798C131f6"), // Replace with the spender's address
+                Uint256(BigInteger.valueOf(value.toLong())) // Replace with the value you want to approve
             ),
             listOf(object : TypeReference<Bool>() {})
         )
@@ -157,8 +157,7 @@ class WalletViewModel @Inject constructor(
         val function = Function(
             "buyTokens",
             listOf(
-                Address("0x499BbB318c729a17f16f9A061C5903aff9264B6f"), // Replace with the spender's address
-                Uint256(BigInteger.valueOf(100)) // Replace with the value you want to approve
+                Uint256(BigInteger.valueOf(value.toLong())) // Replace with the value you want to Buy
             ),
             listOf(object : TypeReference<Bool>() {})
         )
@@ -168,12 +167,12 @@ class WalletViewModel @Inject constructor(
         // send...
         viewModelScope.launch {
             val from = ethereum.selectedAddress
-            val to = "0x90F96A3f63bbC7A9b30C90c31949055Ec304C484"
+            val to = "0xC339BFCa084Df58DfAe10b111465057798C131f6"
 
             val params: Map<String, Any> = mapOf(
                 "from" to from,
                 "to" to to,
-                "value" to value, // decimal value of type Double from editText eg. 0.0001
+                "value" to "1000000000000", // decimal value of type Double from editText eg. 0.0001
                 "data" to encodedFunction
             )
             ethereum.sendRequest(

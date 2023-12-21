@@ -66,7 +66,7 @@ class WalletFragment : Fragment() {
             }
             btnBuy.setOnClickListener {
                 if (etAmount.text.toString().isNotEmpty()) {
-                    viewModel.approveSmartContract() { result ->
+                    viewModel.approveSmartContract(etAmount.text.toString().toDouble()) { result ->
                         if (result is RequestError) {
                             Log.d(TAG, "Ethereum transaction error: ${result.message}")
                         } else {
