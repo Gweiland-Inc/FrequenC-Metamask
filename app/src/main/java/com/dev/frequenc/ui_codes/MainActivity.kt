@@ -102,7 +102,7 @@ class MainActivity : AppCompatActivity() {
 
         sharedPreferences = getSharedPreferences(Constants.SharedPreference, Context.MODE_PRIVATE)!!
 
-        binding.drawerLayout.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS)
+//        binding.drawerLayout.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS)
 
         allChatListViewModel =
             ViewModelProvider(this@MainActivity)[AllChatListViewModel::class.java]

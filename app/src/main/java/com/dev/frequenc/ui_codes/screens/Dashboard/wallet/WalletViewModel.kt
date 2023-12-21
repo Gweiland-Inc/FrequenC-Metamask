@@ -117,13 +117,13 @@ class WalletViewModel @Inject constructor(
 
     // we are encoding the smartcontract function name along with the inputs,
     // we are using the encoded data to call the smartcontract function with metamask
-    fun smartContractFun() {
+    fun smartContractFun(amount: Long) {
 
         val function = Function(
             "approve",
             listOf(
                 Address("0x499BbB318c729a17f16f9A061C5903aff9264B6f"), // Replace with the spender's address
-                Uint256(BigInteger.valueOf(100)) // Replace with the value you want to approve
+                Uint256(BigInteger.valueOf(amount)) // Replace with the value you want to approve
             ),
             listOf(object : TypeReference<Bool>() {})
         )

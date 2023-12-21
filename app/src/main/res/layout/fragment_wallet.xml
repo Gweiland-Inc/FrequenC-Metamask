@@ -40,4 +40,16 @@
         app:layout_constraintStart_toStartOf="@+id/btnConnect"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="TextView" />
+
+    <EditText
+        android:id="@+id/etAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="48dp"
+        android:ems="10"
+        android:inputType="number"
+        android:hint="Amount"
+        app:layout_constraintBottom_toTopOf="@+id/btnConnect"
+        app:layout_constraintEnd_toEndOf="@+id/btnBuy"
+        app:layout_constraintStart_toStartOf="@+id/btnConnect" />
 </androidx.constraintlayout.widget.ConstraintLayout>
