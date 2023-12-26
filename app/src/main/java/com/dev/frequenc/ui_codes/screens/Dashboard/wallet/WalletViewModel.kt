@@ -66,7 +66,7 @@ class WalletViewModel @Inject constructor(
         }
     }
 
-    // Wrapper function call all RPC methods
+    // To call the sign method
     fun sendRequest(callback: ((Any?) -> Unit)?) {
         viewModelScope.launch {
 //            val message =
@@ -116,6 +116,8 @@ class WalletViewModel @Inject constructor(
         }
     }
 
+    // Calling Approve Method, The function name "approve" is encoded along with it's input parameters
+    //The encoded string is passed as data to the sendTransaction
     fun approveSmartContract(
         value: Double, // decimal value of type Double from editText eg. 0.0001
         callback: ((Any?) -> Unit)?
@@ -131,7 +133,7 @@ class WalletViewModel @Inject constructor(
         val encodedFunction = FunctionEncoder.encode(function)
         Log.d("Encoded", encodedFunction)
 
-        // send...
+        // sendTransaction method
         viewModelScope.launch {
             val from = ethereum.selectedAddress
             val to = "0x90F96A3f63bbC7A9b30C90c31949055Ec304C484"
@@ -150,6 +152,8 @@ class WalletViewModel @Inject constructor(
         }
     }
 
+    // Calling buyTokens Method, The function name "buyTokens" is encoded along with it's input parameters
+    //The encoded string is passed as data to the sendTransaction.
     fun buyTokenSmartContract(
         value: Double,
         callback: ((Any?) -> Unit)?
@@ -157,14 +161,14 @@ class WalletViewModel @Inject constructor(
         val function = Function(
             "buyTokens",
             listOf(
-                Uint256(BigInteger.valueOf(value.toLong())) // Replace with the value you want to Buy
+                Uint256(BigInteger.valueOf(value.toLong())) // Replace with the amount of tokens you want to buy
             ),
             listOf(object : TypeReference<Bool>() {})
         )
         val encodedFunction = FunctionEncoder.encode(function)
         Log.d("Encoded", encodedFunction)
 
-        // send...
+        // sendTransaction method
         viewModelScope.launch {
             val from = ethereum.selectedAddress
             val to = "0xC339BFCa084Df58DfAe10b111465057798C131f6"
@@ -172,7 +176,8 @@ class WalletViewModel @Inject constructor(
             val params: Map<String, Any> = mapOf(
                 "from" to from,
                 "to" to to,
-                "value" to "1000000000000", // decimal value of type Double from editText eg. 0.0001
+                "value" to "1000000000000", // You can dynamically get the 'value', which is the
+                // amount of ETH you want to process the transaction with
                 "data" to encodedFunction
             )
             ethereum.sendRequest(
@@ -181,63 +186,6 @@ class WalletViewModel @Inject constructor(
                     params = listOf(params)
                 ), callback
             )
-        }
-    }
-
-    // we are encoding the smartcontract function name along with the inputs,
-    // we are using the encoded data to call the smartcontract function with metamask
-    fun smartContractFun(
-        value: Double,
-        functionName: String
-    ) {
-
-        val function = Function(
-            functionName,
-            listOf(
-                Address("0x499BbB318c729a17f16f9A061C5903aff9264B6f"), // Replace with the spender's address
-                Uint256(BigInteger.valueOf(100)) // Replace with the value you want to approve
-            ),
-            listOf(object : TypeReference<Bool>() {})
-        )
-        val encodedFunction = FunctionEncoder.encode(function)
-        Log.d("Encoded",encodedFunction);
-        sendTransaction(value, encodedFunction) { result ->
-            if (result is RequestError) {
-                // handle error
-                Log.d(TAG, "Ethereum transaction error: ${result.message}")
-            } else {
-                Log.d(TAG, "Ethereum transaction result: $result")
-            }
-        }
-
-    }
-
-    private fun sendTransaction(value: Double, encodedFunction:String, callback: ((Any?) -> Unit)?) {
-        viewModelScope.launch {
-            val from = ethereum.selectedAddress
-//            val to = "0x0000000000000000000000000000000000000000"
-            val to = "0x90F96A3f63bbC7A9b30C90c31949055Ec304C484"
-//            val data = encodedFunction
-            val params: Map<String, Any> = mapOf(
-                "from" to from,
-                "to" to to,
-                "value" to value, // decimal value of type Double from editText eg. 0.0001
-                "data" to encodedFunction
-            )
-
-            ethereum.sendRequest(
-                EthereumRequest(
-                    method = EthereumMethod.ETH_SEND_TRANSACTION.value,
-                    params = listOf(params)
-                ), callback
-            )
-//        { result ->
-//            if (result is RequestError) {
-//                // handle error
-//            } else {
-//                Log.d(TAG, "Ethereum transaction result: $result")
-//            }
-//        }
         }
     }
 
